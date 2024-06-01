@@ -18,4 +18,8 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\DailyPlanner.DAL\DailyPlanner.DAL.csproj" />
+    </ItemGroup>
+
 </Project>

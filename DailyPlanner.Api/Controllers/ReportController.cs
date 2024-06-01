@@ -4,8 +4,8 @@ namespace DailyPlanner.Api.Controllers;
 
 public class ReportController : ControllerBase
 {
-    public IActionResult Index()
+    /*public IActionResult Index()
     {
         return View();
-    }
+    }*/
 }
