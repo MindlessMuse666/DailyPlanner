@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.3" />
+        <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     </ItemGroup>
 
@@ -19,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\DailyPlanner.Application\DailyPlanner.Application.csproj" />
       <ProjectReference Include="..\DailyPlanner.DAL\DailyPlanner.DAL.csproj" />
     </ItemGroup>
 
