@@ -72,42 +72,43 @@ public class ReportService : IReportService
     }
 
     /// <inheritdoc />
-    public async Task<BaseResult<ReportDto>> GetReportByIdAsync(long id)
+    public Task<BaseResult<ReportDto>> GetReportByIdAsync(long id)
     {
         ReportDto? report;
 
         try
         {
-            report = await _reportRepository.GetAll()
+            report = _reportRepository.GetAll()
+                .AsEnumerable()
                 .Select(x => new ReportDto(x.Id, x.Name, x.Description, x.CreatedAt.ToLongDateString()))
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .FirstOrDefault(x => x.Id == id);
         }
         catch (Exception exception)
         {
             _logger.Error(exception, exception.Message);
 
-            return new BaseResult<ReportDto>
+            return Task.FromResult(new BaseResult<ReportDto>
             {
                 ErrorMessage = ErrorMessage.InternalServerError,
                 ErrorCode = (int)ErrorCodes.InternalServerError
-            };
+            });
         }
 
         if (report == null)
         {
-            _logger.Warning("Отчёт с {Id} не найден", id);
+            _logger.Warning($"Отчёт с {id} не найден", id);
 
-            return new BaseResult<ReportDto>
+            return Task.FromResult(new BaseResult<ReportDto>
             {
                 ErrorMessage = ErrorMessage.ReportNotFound,
                 ErrorCode = (int)ErrorCodes.ReportNotFound
-            };
+            });
         }
 
-        return new BaseResult<ReportDto>
+        return Task.FromResult(new BaseResult<ReportDto>
         {
             Data = report
-        };
+        });
     }
 
     /// <inheritdoc />
