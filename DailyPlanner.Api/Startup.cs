@@ -1,11 +1,52 @@
 ﻿using System.Reflection;
+using System.Text;
 using Asp.Versioning;
+using DailyPlanner.Domain.Settings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace DailyPlanner.Api;
 
 public static class Startup
 {
+    /// <summary>
+    /// Подключение аутентификации и авторизации
+    /// </summary>
+    /// <param name="services"></param>
+    public static void AddAuthenticationAndAuthorization(this IServiceCollection services, WebApplicationBuilder builder)
+    {
+        services.AddAuthorization();
+        services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(jwtBearerOptions =>
+            {
+                var options = builder.Configuration
+                    .GetSection(JwtSettings.DefaultSection)
+                    .Get<JwtSettings>();
+                var jwtKet = options.JwtKey;
+                var issuer = options.Issuer;
+                var audience = options.Audience;
+
+                jwtBearerOptions.Authority = options.Authority;
+                jwtBearerOptions.RequireHttpsMetadata = false;
+                jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = issuer,
+                    ValidAudience = audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKet)),
+                    ValidateAudience = true,
+                    ValidateIssuer = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true
+                };
+            });
+    }
+
     /// <summary>
     /// Подключение Swagger
     /// </summary>
@@ -35,7 +76,7 @@ public static class Startup
                     Url = new Uri("https://github.com/MindlessMuse666"),
                 }
             });
-            
+
             options.SwaggerDoc("v2", new OpenApiInfo
             {
                 Version = "v2",
@@ -48,7 +89,7 @@ public static class Startup
                     Url = new Uri("https://github.com/MindlessMuse666"),
                 }
             });
-            
+
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,
@@ -58,7 +99,7 @@ public static class Startup
                 BearerFormat = "JWT",
                 Scheme = "Bearer"
             });
-            
+
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                 {

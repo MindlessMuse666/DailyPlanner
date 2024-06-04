@@ -57,14 +57,14 @@ public class ReportService : IReportService
         {
             _logger.Warning(ErrorMessage.ReportsNotFound, reports.Length);
 
-            return new CollectionResult<ReportDto>()
+            return new CollectionResult<ReportDto>
             {
                 ErrorMessage = ErrorMessage.ReportsNotFound,
                 ErrorCode = (int)ErrorCodes.ReportsNotFound
             };
         }
 
-        return new CollectionResult<ReportDto>()
+        return new CollectionResult<ReportDto>
         {
             Data = reports,
             Count = reports.Length
