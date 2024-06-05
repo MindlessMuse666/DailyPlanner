@@ -33,6 +33,12 @@
         <value>Пользователь с такими данными уже существует</value>
     </data>
     <data name="PasswordIsWrong" xml:space="preserve">
-        <value>PasswordIsWrong</value>
+        <value>Неверный пароль</value>
+    </data>
+    <data name="InvalidToken" xml:space="preserve">
+        <value>Невалидный токен</value>
+    </data>
+    <data name="InvalidClientRequest" xml:space="preserve">
+        <value>Невалидный запрос клиента</value>
     </data>
 </root>
