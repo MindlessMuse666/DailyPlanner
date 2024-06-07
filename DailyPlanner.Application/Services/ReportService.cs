@@ -163,16 +163,6 @@ public class ReportService : IReportService
     {
         try
         {
-            // await _reportRepository.CreateAsync(new Report
-            // {
-            //     UserId = 1,
-            //     Name = "XXXX",
-            //     Description = "XXXX",
-            //     CreatedAt = DateTime.UtcNow,
-            //     CreatedBy = 1,
-            //     UpdatedAt = DateTime.UtcNow,
-            //     UpdatedBy = 1
-            // });
             var report = await _reportRepository.GetAll()
                 .FirstOrDefaultAsync(x => x.Id == id);
 

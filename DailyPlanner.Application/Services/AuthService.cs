@@ -48,6 +48,7 @@ public class AuthService : IAuthService
             var user = await _userRepository
                 .GetAll()
                 .FirstOrDefaultAsync(x => x.Login == dto.Login);
+            
             if (user != null)
             {
                 return new BaseResult<UserDto>
