@@ -93,7 +93,7 @@ public class AuthService : IAuthService
                 .GetAll()
                 .FirstOrDefaultAsync(x => x.Login == dto.Login);
             
-            if (user != null)
+            if (user == null)
             {
                 return new BaseResult<TokenDto>
                 {
@@ -172,6 +172,6 @@ public class AuthService : IAuthService
     {
         var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
 
-        return BitConverter.ToString(bytes).ToLower();
+        return Convert.ToBase64String(bytes);
     }
 }
