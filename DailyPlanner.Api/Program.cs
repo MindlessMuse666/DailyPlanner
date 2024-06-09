@@ -1,4 +1,5 @@
 using DailyPlanner.Api;
+using DailyPlanner.Api.Middlewares;
 using DailyPlanner.Application.DependencyInjection;
 using DailyPlanner.DAL.DependencyInjection;
 using DailyPlanner.Domain.Settings;
@@ -21,6 +22,8 @@ builder.Services.AddApplication();
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -31,6 +34,11 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = string.Empty;
     });
 }
+
+app.UseCors(policyBuilder => policyBuilder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
 
 app.UseHttpsRedirection();
 

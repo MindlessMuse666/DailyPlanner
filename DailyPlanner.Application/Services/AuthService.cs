@@ -23,7 +23,8 @@ public class AuthService : IAuthService
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
 
-    public AuthService(IBaseRepository<User> userRepository, IMapper mapper, ILogger logger, IBaseRepository<UserToken> userTokenRepository, ITokenService tokenService)
+    public AuthService(IBaseRepository<User> userRepository, IMapper mapper, ILogger logger,
+        IBaseRepository<UserToken> userTokenRepository, ITokenService tokenService)
     {
         _userRepository = userRepository;
         _mapper = mapper;
@@ -34,6 +35,8 @@ public class AuthService : IAuthService
 
     public async Task<BaseResult<UserDto>> Register(RegisterUserDto dto)
     {
+        throw new UnauthorizedAccessException("Unauthorized access exception");
+        
         if (dto.Password != dto.PasswordConfirm)
         {
             return new BaseResult<UserDto>
@@ -43,46 +46,34 @@ public class AuthService : IAuthService
             };
         }
 
-        try
+
+        var user = await _userRepository
+            .GetAll()
+            .FirstOrDefaultAsync(x => x.Login == dto.Login);
+
+        if (user != null)
         {
-            var user = await _userRepository
-                .GetAll()
-                .FirstOrDefaultAsync(x => x.Login == dto.Login);
-            
-            if (user != null)
-            {
-                return new BaseResult<UserDto>
-                {
-                    ErrorMessage = ErrorMessage.UserAlreadyExists,
-                    ErrorCode = (int)ErrorCodes.UserAlreadyExists
-                };
-            }
-
-            var hashUserPassword = HashPassword(dto.Password);
-
-            user = new User
-            {
-                Login = dto.Login,
-                Password = hashUserPassword
-            };
-
-            await _userRepository.CreateAsync(user);
-
             return new BaseResult<UserDto>
             {
-                Data = _mapper.Map<UserDto>(user)
+                ErrorMessage = ErrorMessage.UserAlreadyExists,
+                ErrorCode = (int)ErrorCodes.UserAlreadyExists
             };
         }
-        catch (Exception exception)
-        {
-            _logger.Error(exception, exception.Message);
 
-            return new BaseResult<UserDto>
-            {
-                ErrorMessage = ErrorMessage.InternalServerError,
-                ErrorCode = (int)ErrorCodes.InternalServerError
-            };
-        }
+        var hashUserPassword = HashPassword(dto.Password);
+
+        user = new User
+        {
+            Login = dto.Login,
+            Password = hashUserPassword
+        };
+
+        await _userRepository.CreateAsync(user);
+
+        return new BaseResult<UserDto>
+        {
+            Data = _mapper.Map<UserDto>(user)
+        };
     }
 
     public async Task<BaseResult<TokenDto>> Login(LoginUserDto dto)
@@ -92,7 +83,7 @@ public class AuthService : IAuthService
             var user = await _userRepository
                 .GetAll()
                 .FirstOrDefaultAsync(x => x.Login == dto.Login);
-            
+
             if (user == null)
             {
                 return new BaseResult<TokenDto>
