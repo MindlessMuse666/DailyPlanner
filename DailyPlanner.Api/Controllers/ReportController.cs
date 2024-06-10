@@ -21,34 +21,6 @@ public class ReportController : ControllerBase
     }
     
     /// <summary>
-    /// Получение всех доступных отчётов пользователя по userId
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <remarks>
-    /// Sample request:
-    ///
-    ///     GET
-    ///     {
-    ///         "id": 1
-    ///     }
-    /// 
-    /// </remarks>
-    /// <response code="200">Все доступные отчёты были успешно получены</response>
-    /// <response code="400">Отчёты не были получены</response>
-    [HttpGet("reports/{userId}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<BaseResult<ReportDto>>> GetUserReports(long userId)
-    {
-        var response = await _reportService.GetReportsAsync(userId);
-
-        if (response.IsSuccess)
-            return Ok(response);
-
-        return BadRequest(response);
-    }
-
-    /// <summary>
     /// Получение отчёта пользователя по id отчёта
     /// </summary>
     /// <param name="id"></param>
@@ -63,10 +35,10 @@ public class ReportController : ControllerBase
     /// </remarks>
     /// <response code="200">Отчёт был успешно получен</response>
     /// <response code="400">Отчёт не был получен</response>
-    [HttpGet("{id}")]
+    [HttpGet("{id:long}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<BaseResult<ReportDto>>> GetReport(long id)
+    public async Task<ActionResult<BaseResult<ReportDto>>> Get(long id)
     {
         var response = await _reportService.GetReportByIdAsync(id);
 
@@ -77,26 +49,26 @@ public class ReportController : ControllerBase
     }
     
     /// <summary>
-    /// Удаление отчёта пользователя по id отчёта
+    /// Получение всех доступных отчётов пользователя по userId
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="userId"></param>
     /// <remarks>
     /// Sample request:
     ///
-    ///     DELETE
+    ///     GET
     ///     {
     ///         "id": 1
     ///     }
     /// 
     /// </remarks>
-    /// <response code="200">Отчёт был успешно удалён</response>
-    /// <response code="400">Отчёт не был удалён</response>
-    [HttpDelete("{id}")]
+    /// <response code="200">Все доступные отчёты были успешно получены</response>
+    /// <response code="400">Отчёты не были получены</response>
+    [HttpGet("reports/{userId:long}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<BaseResult<ReportDto>>> DeleteReport(long id)
+    public async Task<ActionResult<BaseResult<ReportDto>>> GetAll(long userId)
     {
-        var response = await _reportService.DeleteReportAsync(id);
+        var response = await _reportService.GetReportsAsync(userId);
 
         if (response.IsSuccess)
             return Ok(response);
@@ -124,7 +96,7 @@ public class ReportController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<BaseResult<ReportDto>>> CreateReport([FromBody] CreateReportDto dto)
+    public async Task<ActionResult<BaseResult<ReportDto>>> Create([FromBody] CreateReportDto dto)
     {
         var response = await _reportService.CreateReportAsync(dto);
 
@@ -154,9 +126,37 @@ public class ReportController : ControllerBase
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<BaseResult<ReportDto>>> UpdateReport([FromBody] UpdateReportDto dto)
+    public async Task<ActionResult<BaseResult<ReportDto>>> Update([FromBody] UpdateReportDto dto)
     {
         var response = await _reportService.UpdateReportAsync(dto);
+
+        if (response.IsSuccess)
+            return Ok(response);
+
+        return BadRequest(response);
+    }
+
+    /// <summary>
+    /// Удаление отчёта пользователя по id отчёта
+    /// </summary>
+    /// <param name="id"></param>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     DELETE
+    ///     {
+    ///         "id": 1
+    ///     }
+    /// 
+    /// </remarks>
+    /// <response code="200">Отчёт был успешно удалён</response>
+    /// <response code="400">Отчёт не был удалён</response>
+    [HttpDelete("{id:long}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<BaseResult<ReportDto>>> Delete(long id)
+    {
+        var response = await _reportService.DeleteReportAsync(id);
 
         if (response.IsSuccess)
             return Ok(response);

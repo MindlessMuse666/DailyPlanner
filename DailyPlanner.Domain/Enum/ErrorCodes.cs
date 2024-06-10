@@ -12,6 +12,9 @@ public enum ErrorCodes
     
     PasswordNotEqualsPasswordConfirm = 21,
     PasswordIsWrong = 22,
+    
+    RoleNotFound = 31,
+    RoleAlreadyExists = 32,
 
     InternalServerError = 10
 }

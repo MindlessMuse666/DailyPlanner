@@ -35,8 +35,6 @@ public class AuthService : IAuthService
 
     public async Task<BaseResult<UserDto>> Register(RegisterUserDto dto)
     {
-        throw new UnauthorizedAccessException("Unauthorized access exception");
-        
         if (dto.Password != dto.PasswordConfirm)
         {
             return new BaseResult<UserDto>
